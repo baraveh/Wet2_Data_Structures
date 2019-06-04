@@ -24,13 +24,20 @@ public:
     AVLNode *left_m;
     AVLNode *right_m;
     int height_m;
+    int rank_m;
+    T leftSum;
+    T rightSum;
+
 
     AVLNode(const T &key = T(), const S &value = S())
             : key_m(key),
               value_m(value),
               left_m(nullptr),
               right_m(nullptr),
-              height_m(1) {}
+              height_m(1),
+              rank_m(1),
+              leftSum(),
+              rightSum(){}
 
     ~AVLNode() {
         delete left_m;
@@ -81,6 +88,13 @@ private:
 
     int height(AVLNode<T, S> *aNode);
 
+    int rank (AVLNode<T,S>* aNode){
+        if (aNode == nullptr) {
+            return 0;
+        }
+        return aNode->rank_m;
+    }
+
     int countNodes(const AVLNode<T, S> *aNode) const;
 
     void
@@ -114,8 +128,10 @@ AVLNode<T, S> *AVLTree<T, S>::rollLL(AVLNode<T, S> *aNode) {
     
     aNode->height_m = std::max(height(aNode->left_m),
                                height(aNode->right_m)) + 1;
+    aNode->rank_m = 1 + rank(aNode->left_m) + rank(aNode->right_m);
     rotatedNode->height_m = std::max(height(rotatedNode->left_m),
                            height(rotatedNode->right_m)) + 1;
+    rotatedNode->rank_m = 1 + rank(aNode->left_m) + rank(aNode->right_m);
     
     return rotatedNode;
 }
@@ -324,6 +340,7 @@ AVLTree<T, S>::createTreeFromSortedArr(AVLNode<T, S> *nodeArr, int start, int en
     aNode->right_m = createTreeFromSortedArr(nodeArr, mid + 1, end);
     aNode->height_m = std::max(height(aNode->left_m),
                                height(aNode->right_m)) + 1;
+    aNode->rank_m = 1 + rank(aNode->left_m) + rank(aNode->right_m);
     return aNode;
 }
 
@@ -393,6 +410,8 @@ AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
 
     root->height_m = 1 + std::max(height(root->left_m),
                                   height(root->right_m));
+    root->rank_m = 1 + rank(root->left_m) + rank (root->right_m);
+
     int balance = getBalance(root);
 
     //RR
@@ -440,6 +459,8 @@ AVLTree<T, S>::insertNode(AVLNode<T, S> *root, const T &key, const S &value) {
     
     root->height_m = 1 + std::max(height(root->left_m),
                                   height(root->right_m));
+
+    root->rank_m = 1 + rank(root->left_m) + rank(root->right_m);
 
     int balance = getBalance(root);
     

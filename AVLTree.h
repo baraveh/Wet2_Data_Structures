@@ -88,12 +88,7 @@ private:
 
     int height(AVLNode<T, S> *aNode);
 
-    int rank (AVLNode<T,S>* aNode){
-        if (aNode == nullptr) {
-            return 0;
-        }
-        return aNode->rank_m;
-    }
+    int rank (AVLNode<T,S>* aNode);
 
     int countNodes(const AVLNode<T, S> *aNode) const;
 
@@ -131,7 +126,7 @@ AVLNode<T, S> *AVLTree<T, S>::rollLL(AVLNode<T, S> *aNode) {
     aNode->rank_m = 1 + rank(aNode->left_m) + rank(aNode->right_m);
     rotatedNode->height_m = std::max(height(rotatedNode->left_m),
                            height(rotatedNode->right_m)) + 1;
-    rotatedNode->rank_m = 1 + rank(aNode->left_m) + rank(aNode->right_m);
+    rotatedNode->rank_m = 1 + rank(rotatedNode->left_m) + rank(rotatedNode->right_m);
     
     return rotatedNode;
 }
@@ -146,8 +141,10 @@ AVLNode<T, S> *AVLTree<T, S>::rollRR(AVLNode<T, S> *aNode) {
     
     aNode->height_m = max(height(aNode->left_m),
                           height(aNode->right_m)) + 1;
+    aNode->rank_m = 1 + rank(aNode->right_m) + rank(aNode->left_m);
     rotatedNode->height_m = max(height(rotatedNode->left_m),
                       height(rotatedNode->right_m)) + 1;
+    rotatedNode->rank_m = 1 + rank(rotatedNode->right_m) + rank(rotatedNode->left_m);
 
     return rotatedNode;
 }
@@ -158,6 +155,14 @@ int AVLTree<T, S>::height(AVLNode<T, S> *aNode) {
         return 0;
     }
     return aNode->height_m;
+}
+
+template<class T, class S>
+int AVLTree<T, S>::rank (AVLNode<T,S>* aNode){
+    if (aNode == nullptr) {
+        return 0;
+    }
+    return aNode->rank_m;
 }
 
 

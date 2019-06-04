@@ -47,6 +47,6 @@ Pair<CourseID, GroupID> &Room::getLecture(const int &hour) {
     throw NoSuchValue();
 }
 
-int Room::getId() {
+const int& Room::getId() const{
     return r_roomId;
 }

@@ -6,14 +6,88 @@
 
 RoomHash::RoomHash() : h_numOfElements(0){}
 
-Room &RoomHash::find(const int &roomId) {
+Room &RoomHash::find(const RoomID& roomId) {
     int hash = roomId%(h_table.getSize());
+    Node<Room>* iterator = h_table[hash].getHead();
+    for(int i = 0; i < h_table[hash].getSize(); i++){
+        assert(iterator != nullptr);
+        if((iterator->data_m).getId() == roomId){
+            return iterator->data_m;
+        }
+        iterator = iterator->next_m;
+    }
+
+    throw NoSuchValue();
 }
 
-void RoomHash::addRoom(const int &roomId) {
+void RoomHash::addRoom(const RoomID& roomId) {
+    try {
+        find(roomId);
+    }
+    catch (NoSuchValue& e) {
+        int hash = roomId%(h_table.getSize());
+        h_table[hash].addLast(Room(roomId));
+        h_numOfElements++;
 
+        if(h_numOfElements == h_table.getSize()){
+            Array<List<Room>> oldTable = h_table;
+            h_table = Array<List<Room>>(((oldTable.getSize())*2));
+            rehash(oldTable);
+        }
+        return;
+    }
+    throw KeyAlreadyExists();
 }
 
-void RoomHash::removeRoom(const int &roomId) {
+void RoomHash::removeRoom(const RoomID& roomId) {
+    int hash = roomId%(h_table.getSize());
+    Node<Room>* iterator = h_table[hash].getHead();
+    for(int i = 0; i < h_table[hash].getSize(); i++){
+        assert(iterator != nullptr);
+        if((iterator->data_m).getId() == roomId){
+            h_table[hash].deleteNode(iterator);
+            h_numOfElements--;
+            if(h_numOfElements == h_table.getSize()/4){
+                Array<List<Room>> oldTable = h_table;
+                h_table = Array<List<Room>>(oldTable.getSize()/2);
+                rehash(oldTable);
+            }
+            return;
+        }
+        iterator = iterator->next_m;
+    }
 
+    throw NoSuchValue();
+}
+
+void RoomHash::rehash(const Array<List<Room>> &oldTable) {
+    for(int i = 0; i < oldTable.getSize(); i++){
+        Node<Room>* iterator = h_table[i].getHead();
+        for(int j = 0; j < h_table[i].getSize(); j++) {
+            assert(iterator != nullptr);
+            addRoom(iterator->data_m);
+            iterator = iterator->next_m;
+        }
+    }
+}
+
+void RoomHash::addRoom(const Room &room) {
+    try {
+        find(room.getId());
+    }
+    catch (NoSuchValue& e) {
+        int hash = room.getId()%(h_table.getSize());
+        h_table[hash].addLast(room);
+        h_numOfElements++;
+
+        if(h_numOfElements == h_table.getSize()){
+            assert(false); //shouldnt happen since I am only using it when rehashing
+            Array<List<Room>> oldTable = h_table;
+            h_table = Array<List<Room>>(oldTable.getSize()*2);
+            rehash(oldTable);
+        }
+        return;
+    }
+    assert(false);//shouldnt happen since I am only using it when rehashing
+    throw KeyAlreadyExists();
 }

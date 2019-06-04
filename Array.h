@@ -60,7 +60,7 @@ public:
         return array_m[index];
     }
 
-    int& getSize(){
+    const int& getSize() const{
         return size_m;
     }
 

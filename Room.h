@@ -32,7 +32,7 @@ public:
 
     Pair<CourseID , GroupID>& getLecture (const int& hour);
 
-    int getId();
+    const int& getId() const;
 
 };
 

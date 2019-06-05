@@ -24,7 +24,7 @@ public:
     ~Pair() = default;
 
     bool operator==(const Pair &aPair) {
-        return p_first = aPair.p_first && p_second = aPair.p_second;
+        return p_first = aPair.p_first && p_second == aPair.p_second;
     }
 
     bool operator!= (const Pair& aPair){
@@ -48,17 +48,17 @@ public:
         return operator>(aPair) || operator==(aPair);
     }
 
-    friend bool operator<(const Pair &a, const Pair &b);
+    template <T,S> friend bool operator< (const Pair<T,S> &a, const Pair<T,S> &b);
 
-    friend bool operator>(const Pair &a, const Pair &b);
+    template <T,S> friend bool operator>(const Pair &a, const Pair &b);
 
-    friend bool operator<=(const Pair &a, const Pair &b);
+    template <T,S> friend bool operator<=(const Pair &a, const Pair &b);
 
-    friend bool operator>=(const Pair &a, const Pair &b);
+    template <T,S> friend bool operator>=(const Pair &a, const Pair &b);
 
-    friend bool operator==(const Pair &a, const Pair &b);
+    template <T,S> friend bool operator==(const Pair &a, const Pair &b);
 
-    friend bool operator != (const Pair& a, const Pair& b);
+    template <T,S> friend bool operator != (const Pair& a, const Pair& b);
 
     Pair operator-(){
         return Pair(-p_first, -p_second);
@@ -74,8 +74,8 @@ public:
         return operator+=(-(aPair));
     }
 
-    friend Pair operator + (const Pair& a, const Pair& b);
-    friend Pair operator - (const Pair& a, const Pair& b);
+    template <T,S> friend Pair operator + (const Pair& a, const Pair& b);
+    template <T,S> friend Pair operator - (const Pair& a, const Pair& b);
 
 };
 

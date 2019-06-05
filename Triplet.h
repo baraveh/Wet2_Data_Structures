@@ -28,8 +28,8 @@ public:
 
     bool operator==(const Triplet &aTriplet) {
         return t_first =
-               aTriplet.p_first && t_second =
-                       aTriplet.p_second && t_third == aTriplet.t_third;
+               aTriplet.t_first && t_second ==
+                       aTriplet.t_second && t_third == aTriplet.t_third;
     }
 
     bool operator != (const Triplet& aTriplet){
@@ -55,17 +55,17 @@ public:
         return operator>(aTriplet) || operator==(aTriplet);
     }
 
-    friend bool operator<(const Triplet &a, const Triplet &b);
+    template <T,S,U> friend bool operator<(const Triplet &a, const Triplet &b);
 
-    friend bool operator>(const Triplet &a, const Triplet &b);
+    template <T,S,U> friend bool operator>(const Triplet &a, const Triplet &b);
 
-    friend bool operator<=(const Triplet &a, const Triplet &b);
+    template <T,S,U> friend bool operator<=(const Triplet &a, const Triplet &b);
 
-    friend bool operator>=(const Triplet &a, const Triplet &b);
+    template <T,S,U> friend bool operator>=(const Triplet &a, const Triplet &b);
 
-    friend bool operator==(const Triplet &a, const Triplet &b);
+    template <T,S,U> friend bool operator==(const Triplet &a, const Triplet &b);
 
-    friend bool operator!=(const Triplet &a, const Triplet& b);
+    template <T,S,U> friend bool operator!=(const Triplet &a, const Triplet& b);
 
     Triplet operator-(){
         return Triplet(-t_first, -t_second, -t_third);
@@ -80,8 +80,8 @@ public:
         operator+=(-(aTriplet));
     }
 
-    friend Triplet operator + (const Triplet& a, const Triplet& b);
-    friend Triplet operator - (const Triplet& a, const Triplet& b);
+    template <T,S,U> friend Triplet operator + (const Triplet& a, const Triplet& b);
+    template <T,S,U> friend Triplet operator - (const Triplet& a, const Triplet& b);
 
 };
 

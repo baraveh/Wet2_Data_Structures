@@ -87,9 +87,9 @@ public:
 
     AVLNode<T, S> *getRoot();
 
-    T leftSum(AVLNode<T,S>* aNode);
+    T leftSum(const AVLNode<T,S>* aNode) const;
 
-    T rightSum(AVLNode<T,S>* aNode);
+    T rightSum(const AVLNode<T,S>* aNode) const;
 
 private:
     AVLNode<T, S> *root;
@@ -121,7 +121,7 @@ private:
 
     int getBalance(AVLNode<T, S> * aNode);
 
-    AVLNode<T,S>* searchIndex(const int& rank, AVLNode<T,S>* root);
+    const AVLNode<T,S>* searchIndex(const int& rank, const AVLNode<T,S>* root) const;
 
     void printInOrder(AVLNode<T,S>* root);
 
@@ -586,7 +586,7 @@ int AVLTree<T, S>::getBalance(AVLNode<T, S> *aNode) {
 }
 
 template<class T, class S>
-T AVLTree<T, S>::rightSum(AVLNode<T, S> *aNode) {
+T AVLTree<T, S>::rightSum(const AVLNode<T, S> *aNode) const{
     if(aNode == nullptr || aNode->right_m == nullptr) {
         return T(0);
     }
@@ -594,7 +594,7 @@ T AVLTree<T, S>::rightSum(AVLNode<T, S> *aNode) {
 }
 
 template<class T, class S>
-T AVLTree<T, S>::leftSum(AVLNode<T, S> *aNode) {
+T AVLTree<T, S>::leftSum(const AVLNode<T, S> *aNode) const{
     if(aNode == nullptr || aNode->left_m == nullptr) {
         return T(0);
     }
@@ -607,7 +607,7 @@ const AVLNode<T, S> *AVLTree<T, S>::searchIndex(const int& index) const {
 }
 
 template<class T, class S>
-AVLNode<T, S> *AVLTree<T, S>::searchIndex(const int &index, AVLNode<T, S> *root) {
+const AVLNode<T, S> *AVLTree<T, S>::searchIndex(const int &index, const AVLNode<T, S> *root) const {
     if(root == nullptr || root->left_m == nullptr){
         return nullptr;
     }

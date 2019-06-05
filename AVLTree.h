@@ -36,8 +36,8 @@ public:
               right_m(nullptr),
               height_m(1),
               rank_m(1),
-              leftSum(),
-              rightSum(){}
+              leftSum(0),
+              rightSum(0){}
 
     ~AVLNode() {
         delete left_m;
@@ -67,17 +67,29 @@ public:
 
     bool searchKey(const T &key);
 
+    const AVLNode<T,S>* searchIndex (const int& index) const;
+
     S &operator[](const T &key);
 
     const S &operator[](const T &key) const;
 
     void printTree(T *keyArr, S *valArr) const; //prints inorder into array
 
+    void printInOrder();
+
+    void printRanksInOrder();
+
+    void printSumsInOrder();
+
     int countNodesInTree() const;
 
     void mergeTrees(const AVLTree<T, S> &treeA, const AVLTree &treeB);
 
     AVLNode<T, S> *getRoot();
+
+    T leftSum(AVLNode<T,S>* aNode);
+
+    T rightSum(AVLNode<T,S>* aNode);
 
 private:
     AVLNode<T, S> *root;
@@ -109,6 +121,14 @@ private:
 
     int getBalance(AVLNode<T, S> * aNode);
 
+    AVLNode<T,S>* searchIndex(const int& rank, AVLNode<T,S>* root);
+
+    void printInOrder(AVLNode<T,S>* root);
+
+    void printRanksInOrder(AVLNode<T,S>* root);
+
+    void printSumsInOrder (AVLNode<T,S>* root);
+
 
 };
 
@@ -124,9 +144,13 @@ AVLNode<T, S> *AVLTree<T, S>::rollLL(AVLNode<T, S> *aNode) {
     aNode->height_m = std::max(height(aNode->left_m),
                                height(aNode->right_m)) + 1;
     aNode->rank_m = 1 + rank(aNode->left_m) + rank(aNode->right_m);
+    aNode->leftSum = leftSum(aNode);
+    aNode->rightSum = rightSum(aNode);
     rotatedNode->height_m = std::max(height(rotatedNode->left_m),
                            height(rotatedNode->right_m)) + 1;
     rotatedNode->rank_m = 1 + rank(rotatedNode->left_m) + rank(rotatedNode->right_m);
+    rotatedNode->leftSum = leftSum(rotatedNode);
+    rotatedNode->rightSum = rightSum(rotatedNode);
     
     return rotatedNode;
 }
@@ -142,9 +166,14 @@ AVLNode<T, S> *AVLTree<T, S>::rollRR(AVLNode<T, S> *aNode) {
     aNode->height_m = max(height(aNode->left_m),
                           height(aNode->right_m)) + 1;
     aNode->rank_m = 1 + rank(aNode->right_m) + rank(aNode->left_m);
+    aNode->leftSum = leftSum(aNode);
+    aNode->rightSum = rightSum(aNode);
+
     rotatedNode->height_m = max(height(rotatedNode->left_m),
                       height(rotatedNode->right_m)) + 1;
     rotatedNode->rank_m = 1 + rank(rotatedNode->right_m) + rank(rotatedNode->left_m);
+    rotatedNode->leftSum = leftSum(rotatedNode);
+    rotatedNode->rightSum = rightSum(rotatedNode);
 
     return rotatedNode;
 }
@@ -346,6 +375,8 @@ AVLTree<T, S>::createTreeFromSortedArr(AVLNode<T, S> *nodeArr, int start, int en
     aNode->height_m = std::max(height(aNode->left_m),
                                height(aNode->right_m)) + 1;
     aNode->rank_m = 1 + rank(aNode->left_m) + rank(aNode->right_m);
+    aNode->leftSum = leftSum(aNode);
+    aNode->rightSum = rightSum(aNode);
     return aNode;
 }
 
@@ -416,6 +447,8 @@ AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
     root->height_m = 1 + std::max(height(root->left_m),
                                   height(root->right_m));
     root->rank_m = 1 + rank(root->left_m) + rank (root->right_m);
+    root->leftSum = leftSum(root);
+    root->rightSum = rightSum(root);
 
     int balance = getBalance(root);
 
@@ -466,6 +499,9 @@ AVLTree<T, S>::insertNode(AVLNode<T, S> *root, const T &key, const S &value) {
                                   height(root->right_m));
 
     root->rank_m = 1 + rank(root->left_m) + rank(root->right_m);
+
+    root->leftSum = leftSum(root);
+    root->rightSum = rightSum(root);
 
     int balance = getBalance(root);
     
@@ -548,6 +584,96 @@ int AVLTree<T, S>::getBalance(AVLNode<T, S> *aNode) {
            height(aNode->right_m);
 }
 
+template<class T, class S>
+T AVLTree<T, S>::rightSum(AVLNode<T, S> *aNode) {
+    if(aNode == nullptr || aNode->right_m == nullptr) {
+        return T(0);
+    }
+    return aNode->right_m->key_m + aNode->right_m->leftSum + aNode->right_m->rightSum;
+}
+
+template<class T, class S>
+T AVLTree<T, S>::leftSum(AVLNode<T, S> *aNode) {
+    if(aNode == nullptr || aNode->left_m == nullptr) {
+        return T(0);
+    }
+    return aNode->left_m->key_m + aNode->left_m->leftSum + aNode->left_m->rightSum;
+}
+
+template<class T, class S>
+const AVLNode<T, S> *AVLTree<T, S>::searchIndex(const int& index) const {
+    return searchIndex(index, root);
+}
+
+template<class T, class S>
+AVLNode<T, S> *AVLTree<T, S>::searchIndex(const int &index, AVLNode<T, S> *root) {
+    if(root == nullptr || root->left_m == nullptr){
+        return nullptr;
+    }
+    int kMinusOne = index - 1;
+    if(root->left_m->rank_m == kMinusOne){
+        return root;
+    }
+    if(root->left_m->rank_m > kMinusOne){
+        return searchIndex(index,root->left_m);
+    }
+    if(root->left_m->rank_m < kMinusOne){
+        return searchIndex(kMinusOne - root->left_m->rank_m, root->right_m);
+    }
+}
+
+template<class T, class S>
+void AVLTree<T, S>::printInOrder() {
+    printInOrder(root);
+}
+
+template<class T, class S>
+void AVLTree<T, S>::printRanksInOrder() {
+    printRanksInOrder(root);
+}
+
+template<class T, class S>
+void AVLTree<T, S>::printSumsInOrder() {
+    printSumsInOrder(root);
+}
+
+template<class T, class S>
+void AVLTree<T, S>::printInOrder(AVLNode<T, S> *root) {
+    if (root == nullptr)
+        return;
+
+    printInOrder(root->left_m);
+
+    cout << root->key_m << " ";
+
+    printInOrder(root->right_m);
+}
+
+template<class T, class S>
+void AVLTree<T, S>::printRanksInOrder(AVLNode<T, S> *root) {
+    if (root == nullptr)
+        return;
+
+    printRanksInOrder(root->left_m);
+
+    cout << root->rank_m << " ";
+
+    printRanksInOrder(root->right_m);
+}
+
+template<class T, class S>
+void AVLTree<T, S>::printSumsInOrder(AVLNode<T, S> *root) {
+    if (root == nullptr)
+        return;
+
+    printSumsInOrder(root->left_m);
+
+    cout << root->leftSum << " ";
+    cout << root->rightSum << " ";
+
+    printSumsInOrder(root->right_m);
+}
+
 
 template<typename T, typename S>
 AVLNode<T, S> *
@@ -563,7 +689,7 @@ mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
             mergedArr[k].key_m = arr1Keys[i];
             mergedArr[k].value_m = arr1Values[i];
             if (arr1Keys[i] == arr2Keys[j]) {
-                j++;
+                throw KeyAlreadyExists();
             }
             i++;
         } else {

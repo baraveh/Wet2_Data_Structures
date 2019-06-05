@@ -339,7 +339,6 @@ AVLTree<T, S>::mergeTrees(const AVLTree<T, S> &treeA, const AVLTree &treeB) {
         AVLNode<T, S> *temp = root;
         AVLNode<T, S> *res = createTreeFromSortedArr(nodeArr, 0, (nodeArrSize) - 1);
         root = res;
-        delete temp;
 
         delete[] nodeArr;
         if (temp != nullptr) {

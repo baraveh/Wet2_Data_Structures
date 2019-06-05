@@ -19,21 +19,25 @@ int Course::competition(const Course &aCourse, int numLectures) {
 }
 
 float Course::getAverageStudents() {
-    return float(c_totalStudents)/float(c_totalLectures);
+    return (c_totalLectures!= 0) ? float(c_totalStudents)/float(c_totalLectures) : 0;
 }
 
 void Course::mergeCourses(const Course &aCourse) {
     try {
         c_lectureTree.mergeTrees(c_lectureTree,
-                                 aCourse.c_lectureTree); //TODO in avl tree merge, if this doesn't work delete the line delete temp and put a temp parameter here
+                                 aCourse.c_lectureTree);
         c_studentsRanker.mergeTrees(c_studentsRanker,
                                     aCourse.c_studentsRanker);
-        c_totalLectures += aCourse.c_totalLectures;
-        c_totalStudents += aCourse.c_totalStudents;
     }
-    catch (KeyAlreadyExists &e) {
-        throw KeyAlreadyExists();
+    catch (KeyAlreadyExists<LectureKey> &e) {
+        throw KeyAlreadyExists<int>();
     }
+    catch (KeyAlreadyExists<RankKey>& e){
+        assert(false); // shouldnt happen since lecture key catches that
+
+    }
+    c_totalLectures += aCourse.c_totalLectures;
+    c_totalStudents += aCourse.c_totalStudents;
 }
 
 void Course::removeLecture(const GroupID &groupID, const Hour &hour) {
@@ -61,8 +65,8 @@ void Course::addLecture(const RoomID &roomID, const Hour &hour,
         c_studentsRanker.insertElement(
                 RankKey(numOfStudents, groupID, hour), NO_VAL);
     }
-    catch (KeyAlreadyExists &e) {
-        throw KeyAlreadyExists();
+    catch (KeyAlreadyExists<LectureKey> &e) {
+        throw KeyAlreadyExists<int>();
     }
     c_totalLectures++;
     c_totalStudents += numOfStudents;

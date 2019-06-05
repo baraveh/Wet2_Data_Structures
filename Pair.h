@@ -24,7 +24,7 @@ public:
     ~Pair() = default;
 
     bool operator==(const Pair &aPair) {
-        return p_first = aPair.p_first && p_second == aPair.p_second;
+        return p_first == aPair.p_first && p_second == aPair.p_second;
     }
 
     bool operator!= (const Pair& aPair){

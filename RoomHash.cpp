@@ -36,7 +36,7 @@ void RoomHash::addRoom(const RoomID& roomId) {
         }
         return;
     }
-    throw KeyAlreadyExists();
+    throw KeyAlreadyExists<Room>(find(roomId));
 }
 
 void RoomHash::removeRoom(const RoomID& roomId) {
@@ -89,5 +89,5 @@ void RoomHash::addRoom(const Room &room) {
         return;
     }
     assert(false);//shouldnt happen since I am only using it when rehashing
-    throw KeyAlreadyExists();
+    throw KeyAlreadyExists<Room>(find(room.getId()));
 }

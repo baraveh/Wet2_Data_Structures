@@ -206,7 +206,7 @@ AVLTree<T, S>::~AVLTree() {
 template<class T, class S>
 bool AVLTree<T, S>::insertElement(const T &key, const S &value) {
     if (searchKey(key)) {
-        throw KeyAlreadyExists();
+        throw KeyAlreadyExists<T>(key);
     }
     root = insertNode(root, key, value);
     return true;
@@ -492,7 +492,7 @@ AVLTree<T, S>::insertNode(AVLNode<T, S> *root, const T &key, const S &value) {
     else if (key > root->key_m)
         root->right_m = insertNode(root->right_m, key, value);
     else // is equal
-        throw KeyAlreadyExists();
+        throw KeyAlreadyExists<T>(key);
 
     
     root->height_m = 1 + std::max(height(root->left_m),
@@ -689,7 +689,7 @@ mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
             mergedArr[k].key_m = arr1Keys[i];
             mergedArr[k].value_m = arr1Values[i];
             if (arr1Keys[i] == arr2Keys[j]) {
-                throw KeyAlreadyExists();
+                throw KeyAlreadyExists<T>(arr1Keys[i]);
             }
             i++;
         } else {

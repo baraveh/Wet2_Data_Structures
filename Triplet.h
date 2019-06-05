@@ -23,10 +23,17 @@ public:
         return *this;
     }
 
+    Triplet(const Triplet&) = default;
+    ~Triplet() = default;
+
     bool operator==(const Triplet &aTriplet) {
         return t_first =
                aTriplet.p_first && t_second =
                        aTriplet.p_second && t_third == aTriplet.t_third;
+    }
+
+    bool operator != (const Triplet& aTriplet){
+        return !operator==(aTriplet);
     }
 
     bool operator<(const Triplet &aTriplet) {
@@ -58,6 +65,24 @@ public:
 
     friend bool operator==(const Triplet &a, const Triplet &b);
 
+    friend bool operator!=(const Triplet &a, const Triplet& b);
+
+    Triplet operator-(){
+        return Triplet(-t_first, -t_second, -t_third);
+    }
+    Triplet& operator+=(const Triplet& aTriplet){
+        t_first += aTriplet.t_first;
+        t_second += aTriplet.t_second;
+        t_third += aTriplet.t_third;
+        return *this;
+    }
+    Triplet&operator-= (const Triplet& aTriplet){
+        operator+=(-(aTriplet));
+    }
+
+    friend Triplet operator + (const Triplet& a, const Triplet& b);
+    friend Triplet operator - (const Triplet& a, const Triplet& b);
+
 };
 
 template<typename T, typename S, typename U>
@@ -87,6 +112,23 @@ template<typename T, typename S, typename U>
 bool operator==(const Triplet<T, S, U> &a, const Triplet<T, S, U> &b) {
     return (a.t_first == b.t_first &&
             a.t_second == b.t_second && a.t_third == b.t_third);
+}
+
+template<typename T, typename S, typename U>
+bool operator!=(const Triplet<T,S,U> &a, const Triplet<T,S,U> &b) {
+    return !(a==b);
+}
+
+template<typename T, typename S, typename U>
+Triplet<T,S,U> operator+(const Triplet<T,S,U> &a, const Triplet<T,S,U> &b) {
+    Triplet<T,S,U> temp = Triplet<T,S,U>(a);
+    temp+= a;
+    return Triplet<T,S,U>(temp);
+}
+
+template<typename T, typename S, typename U>
+Triplet<T,S,U> operator-(const Triplet<T,S,U> &a, const Triplet<T,S,U> &b) {
+    return operator+(a, -(b));
 }
 
 

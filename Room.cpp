@@ -30,7 +30,7 @@ Pair<CourseID, GroupID>& Room::removeLecture(const int &hour) {
         throw IllegalParameters();
     }
     if (!(r_hoursArr[hour - 1].isValid)){
-       throw NoSuchValue();
+       throw NoSuchKey();
     }
     r_hoursArr[hour-1].isValid = false;
     return r_hoursArr[hour-1].data;
@@ -44,7 +44,7 @@ Pair<CourseID, GroupID> &Room::getLecture(const int &hour) {
         return r_hoursArr[hour-1].data;
     }
 
-    throw NoSuchValue();
+    throw NoSuchKey();
 }
 
 const int& Room::getId() const{

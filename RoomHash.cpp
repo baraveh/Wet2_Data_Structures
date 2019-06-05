@@ -17,14 +17,14 @@ Room &RoomHash::find(const RoomID& roomId) {
         iterator = iterator->next_m;
     }
 
-    throw NoSuchValue();
+    throw NoSuchKey();
 }
 
 void RoomHash::addRoom(const RoomID& roomId) {
     try {
         find(roomId);
     }
-    catch (NoSuchValue& e) {
+    catch (NoSuchKey& e) {
         int hash = roomId%(h_table.getSize());
         h_table[hash].addLast(Room(roomId));
         h_numOfElements++;
@@ -57,13 +57,13 @@ void RoomHash::removeRoom(const RoomID& roomId) {
         iterator = iterator->next_m;
     }
 
-    throw NoSuchValue();
+    throw NoSuchKey();
 }
 
 void RoomHash::rehash(const Array<List<Room>> &oldTable) {
     for(int i = 0; i < oldTable.getSize(); i++){
-        Node<Room>* iterator = h_table[i].getHead();
-        for(int j = 0; j < h_table[i].getSize(); j++) {
+        Node<Room>* iterator = oldTable[i].getHead();
+        for(int j = 0; j < oldTable[i].getSize(); j++) {
             assert(iterator != nullptr);
             addRoom(iterator->data_m);
             iterator = iterator->next_m;
@@ -75,7 +75,7 @@ void RoomHash::addRoom(const Room &room) {
     try {
         find(room.getId());
     }
-    catch (NoSuchValue& e) {
+    catch (NoSuchKey& e) {
         int hash = room.getId()%(h_table.getSize());
         h_table[hash].addLast(room);
         h_numOfElements++;

@@ -8,7 +8,7 @@
 
 #include "Pair.h"
 #include "Array.h"
-#include "defintions.h"
+#include "Defintions.h"
 
 
 class HourArrayEntry{

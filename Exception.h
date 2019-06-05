@@ -31,18 +31,6 @@ class IllegalIndex : public std::exception{
     }
 };
 
-class DuplicateKey : public std::exception{
-    virtual const char* what() const throw(){
-        return "Trees have identical keys";
-    }
-};
-
-class NoSuchValue : public std::exception{
-    virtual const char* what() const throw(){
-        return "No Such Value";
-    }
-};
-
 class IllegalParameters : public std::exception{
     virtual const char* what() const throw(){
         return "Illegal Parameters";

@@ -81,13 +81,12 @@ void RoomHash::addRoom(const Room &room) {
         h_numOfElements++;
 
         if(h_numOfElements == h_table.getSize()){
-            assert(false); //shouldnt happen since I am only using it when rehashing
             Array<List<Room>> oldTable = h_table;
             h_table = Array<List<Room>>(oldTable.getSize()*2);
+            h_numOfElements = 0;
             rehash(oldTable);
         }
         return;
     }
-    assert(false);//shouldnt happen since I am only using it when rehashing
     throw KeyAlreadyExists<Room>(find(room.getId()));
 }

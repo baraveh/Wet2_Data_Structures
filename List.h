@@ -43,6 +43,7 @@ public:
         Node<T> *temp = aList.head_m;
         while (size_m != aList.size_m) {
             addLast(temp->data_m);
+            temp = temp->next_m;
         }
     }
 
@@ -60,15 +61,11 @@ public:
             deleteNode(head_m);
         }
 
-        if(aList.head_m == nullptr){
-            return *this;
-        }
-
         Node<T> *temp = aList.head_m;
-        do {
+        while(size_m != aList.size_m){
             addLast(temp->data_m);
             temp = temp->next_m;
-        } while (temp != aList.head_m);
+        }
 
         return *this;
     }

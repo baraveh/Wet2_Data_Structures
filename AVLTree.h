@@ -121,7 +121,7 @@ private:
 
     int getBalance(AVLNode<T, S> * aNode);
 
-    AVLNode<T,S>* searchIndex(const int& rank, AVLNode<T,S>* root);
+    const AVLNode<T,S>* searchIndex(const int& rank, const AVLNode<T,S>* root) const;
 
     void printInOrder(AVLNode<T,S>* root);
 
@@ -606,7 +606,7 @@ const AVLNode<T, S> *AVLTree<T, S>::searchIndex(const int& index) const {
 }
 
 template<class T, class S>
-AVLNode<T, S> *AVLTree<T, S>::searchIndex(const int &index, AVLNode<T, S> *root) {
+const AVLNode<T, S> *AVLTree<T, S>::searchIndex(const int &index, const AVLNode<T, S> *root) const{
     if(root == nullptr || root->left_m == nullptr){
         return nullptr;
     }

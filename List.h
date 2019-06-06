@@ -186,7 +186,7 @@ public:
         head_m = node;
     }
 
-    int &getSize() {
+    const int &getSize() const{
         return size_m;
     }
 

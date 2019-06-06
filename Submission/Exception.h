@@ -44,12 +44,21 @@ public:
     }
 };
 
+class UnionFailed : public std::exception{
+public:
+    virtual const char* what() const throw(){
+        return "KeysAreInTheSameGroup";
+    }
+};
+
+
 class IllegalParameters : public std::exception{
 public:
     virtual const char* what() const throw(){
         return "Illegal Parameters";
     }
 };
+
 
 
 #endif //WET1_DATA_STRUCTURES_EXCEPTION_H

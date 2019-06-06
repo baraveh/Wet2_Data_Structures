@@ -7,43 +7,48 @@
 
 #include "Array.h"
 #include <cassert>
+#include "Exception.h"
 
-class UnionFindNode{
-public:
-    int u_index;
-    UnionFindNode* u_parent;
-    int numOfChildren;
-    UnionFindNode(const int& index, UnionFindNode* parent = nullptr) : u_index(index), u_parent(parent), numOfChildren(0){}
 
-};
 
 
 template <typename T>
 class UnionFind {
+
+
+    class UnionFindNode{
+    public:
+        int u_index;
+        UnionFindNode* u_parent;
+        int numOfChildren;
+        UnionFindNode(const int& index, UnionFindNode* parent = nullptr) : u_index(index), u_parent(parent), numOfChildren(0){}
+
+    };
+
     Array<UnionFindNode*> u_elementArr;
-    Array<T*> u_dataArr;
+    Array<T*> u_groupArr;
     int u_numOfElements;
 
 public:
 
-    UnionFind(const int& numOfElements = 0) :u_numOfElements(0){
+    UnionFind(const int& numOfElements = 0) :u_numOfElements(numOfElements){
         u_elementArr = Array<UnionFindNode*>(numOfElements);
-        u_dataArr = Array<T*>(numOfElements);
+        u_groupArr = Array<T*>(numOfElements);
 
         for(int i = 0; i < numOfElements; i++){
             u_elementArr[i] = new UnionFindNode(i, nullptr);
-            u_dataArr[i] = new T();
+            u_groupArr[i] = new T();
         }
     }
 
     UnionFind(const UnionFind& aUnionFind){
         u_numOfElements = aUnionFind.u_numOfElements;
         u_elementArr = Array<UnionFindNode*>(u_numOfElements);
-        u_dataArr = Array<T*>(u_numOfElements);
+        u_groupArr = Array<T*>(u_numOfElements);
 
         for(int i = 0; i < u_numOfElements; i++){
             u_elementArr[i] = new UnionFindNode(i, nullptr);
-            u_dataArr[i] = new T(aUnionFind.u_dataArr[i]);
+            u_groupArr[i] = new T(*(aUnionFind.u_groupArr[i]));
         }
 
         for(int i = 0; i < u_numOfElements; i ++){
@@ -59,8 +64,8 @@ public:
                 u_elementArr[i]->u_parent = u_elementArr[root->u_index];
                 u_elementArr[root->u_index]->numOfChildren++;
                 //point its data at the root data and delete previous data
-                T* temp = u_dataArr[i];
-                u_dataArr[i] = u_dataArr[root->u_index];
+                T* temp = u_groupArr[i];
+                u_groupArr[i] = u_groupArr[root->u_index];
                 delete temp;
 
 
@@ -72,7 +77,7 @@ public:
         for(int i = 0; i < u_numOfElements; i++){
             //if this is root delete its data
             if(u_elementArr[i]->u_parent == nullptr){
-                delete u_dataArr[i];
+                delete u_groupArr[i];
             }
         }
         for(int i = 0; i < u_numOfElements; i++){
@@ -85,7 +90,7 @@ public:
         for(int i = 0; i < u_numOfElements; i++){
             //if this is root delete its data
             if(u_elementArr[i]->u_parent == nullptr){
-                delete u_dataArr[i];
+                delete u_groupArr[i];
             }
         }
         for(int i = 0; i < u_numOfElements; i++){
@@ -94,11 +99,11 @@ public:
 
         u_numOfElements = aUnionFind.u_numOfElements;
         u_elementArr = Array<UnionFindNode*>(u_numOfElements);
-        u_dataArr = Array<T*>(u_numOfElements);
+        u_groupArr = Array<T*>(u_numOfElements);
 
         for(int i = 0; i < u_numOfElements; i++){
             u_elementArr[i] = new UnionFindNode(i, nullptr);
-            u_dataArr[i] = new T(aUnionFind.u_dataArr[i]);
+            u_groupArr[i] = new T(aUnionFind.u_groupArr[i]);
         }
 
         for(int i = 0; i < u_numOfElements; i ++){
@@ -114,15 +119,15 @@ public:
                 u_elementArr[i]->u_parent = u_elementArr[root->u_index];
                 u_elementArr[root->u_index]->numOfChildren++;
                 //point its data at the root data and delete previous data
-                T* temp = u_dataArr[i];
-                u_dataArr[i] = u_dataArr[root->u_index];
+                T* temp = u_groupArr[i];
+                u_groupArr[i] = u_groupArr[root->u_index];
                 delete temp;
             }
         }
     }
 
-    T& find(const int& index){
-        if (index > u_numOfElements-1 || index < 0){
+    T* find(const int& index){
+        if (index > u_numOfElements || index < 0){
             throw IllegalIndex();
         }
         Array<UnionFindNode*> nodesToConnect = Array<UnionFindNode*>(u_numOfElements);
@@ -135,16 +140,15 @@ public:
             iterator = iterator->u_parent;
         }
 
-        assert(iterator->numOfChildren == numOfChildren);
-
-        while(numOfChildren != 0){
-            nodesToConnect[numOfChildren]->u_parent = iterator;
-            u_dataArr[nodesToConnect[numOfChildren]->u_index] = u_dataArr[iterator->u_index];
+        while(numOfChildren > 0){
+            nodesToConnect[numOfChildren-1]->u_parent = iterator;
+            u_groupArr[nodesToConnect[numOfChildren -1]->u_index] = u_groupArr[iterator->u_index];
             numOfChildren--;
         }
 
-        return u_dataArr[iterator->u_index];
+        return u_groupArr[iterator->u_index];
     }
+
 
     void unite(const int& index1, const int& index2){
         UnionFindNode* firstRoot = u_elementArr[index1];
@@ -161,10 +165,17 @@ public:
         UnionFindNode* biggerRoot;
         UnionFindNode* smallerRoot;
 
-        firstRoot->numOfChildren > secondRoot->numOfChildren ? biggerRoot = firstRoot, smallerRoot = secondRoot : biggerRoot = secondRoot, smallerRoot = secondRoot;
+        if(secondRoot == firstRoot){
+            throw UnionFailed();
+        }
+
+        firstRoot->numOfChildren > secondRoot->numOfChildren ? biggerRoot = firstRoot, smallerRoot = secondRoot : biggerRoot = secondRoot, smallerRoot = firstRoot;
 
         smallerRoot->u_parent = biggerRoot;
-        biggerRoot->numOfChildren += smallerRoot->numOfChildren;
+        biggerRoot->numOfChildren += 1 + smallerRoot->numOfChildren;
+        T* temp = u_groupArr[smallerRoot->u_index];
+        u_groupArr[smallerRoot->u_index] = u_groupArr[biggerRoot->u_index];
+        delete temp;
     }
 };
 

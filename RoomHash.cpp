@@ -61,6 +61,7 @@ void RoomHash::removeRoom(const RoomID& roomId) {
 }
 
 void RoomHash::rehash(const Array<List<Room>> &oldTable) {
+    h_numOfElements = 0;
     for(int i = 0; i < oldTable.getSize(); i++){
         Node<Room>* iterator = oldTable[i].getHead();
         for(int j = 0; j < oldTable[i].getSize(); j++) {
@@ -83,7 +84,6 @@ void RoomHash::addRoom(const Room &room) {
         if(h_numOfElements == h_table.getSize()){
             Array<List<Room>> oldTable = h_table;
             h_table = Array<List<Room>>(oldTable.getSize()*2);
-            h_numOfElements = 0;
             rehash(oldTable);
         }
         return;

@@ -29,7 +29,7 @@ public:
 
     ~Course() = default;
 
-    Course &operator=(const Course &aCourse);
+    Course &operator=(const Course &aCourse) = default;
 
     void
     addLecture(const RoomID &roomID, const Hour &hour, const GroupID &groupID,

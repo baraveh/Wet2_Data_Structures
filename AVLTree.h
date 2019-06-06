@@ -87,9 +87,9 @@ public:
 
     AVLNode<T, S> *getRoot();
 
-    T leftSum(AVLNode<T,S>* aNode);
+    const T leftSum(const AVLNode<T,S>* aNode) const;
 
-    T rightSum(AVLNode<T,S>* aNode);
+    const T rightSum(const AVLNode<T,S>* aNode) const;
 
 private:
     AVLNode<T, S> *root;
@@ -585,7 +585,7 @@ int AVLTree<T, S>::getBalance(AVLNode<T, S> *aNode) {
 }
 
 template<class T, class S>
-T AVLTree<T, S>::rightSum(AVLNode<T, S> *aNode) {
+const T AVLTree<T, S>::rightSum(const AVLNode<T, S> *aNode) const{
     if(aNode == nullptr || aNode->right_m == nullptr) {
         return T(0);
     }
@@ -593,7 +593,7 @@ T AVLTree<T, S>::rightSum(AVLNode<T, S> *aNode) {
 }
 
 template<class T, class S>
-T AVLTree<T, S>::leftSum(AVLNode<T, S> *aNode) {
+const T AVLTree<T, S>::leftSum(const AVLNode<T, S> *aNode) const{
     if(aNode == nullptr || aNode->left_m == nullptr) {
         return T(0);
     }

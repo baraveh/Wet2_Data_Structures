@@ -5,7 +5,7 @@
 #include <iostream>
 #include <assert.h>
 #include <ctime> // temporary for random tests
-#include "AVLTree.h"
+#include "Submission/AVLTree.h"
 
 #define magicNumber 200
 

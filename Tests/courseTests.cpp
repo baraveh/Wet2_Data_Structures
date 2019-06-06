@@ -2,8 +2,8 @@
 // Created by Bar The magical on 05/06/2019.
 //
 
-#include "Course.h"
-#include "Exception.h"
+#include "Submission/Course.h"
+#include "Submission/Exception.h"
 
 int main(){
 

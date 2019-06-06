@@ -2,7 +2,7 @@
 // Created by Bar The magical on 05/06/2019.
 //
 
-#include "RoomHash.h"
+#include "Submission/RoomHash.h"
 
 int main(){
     RoomHash hash = RoomHash();

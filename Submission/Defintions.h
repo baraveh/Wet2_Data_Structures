@@ -14,4 +14,5 @@ typedef int GroupID;
 typedef int NumOfStudents;
 typedef int Hour;
 
+
 #endif //WET2_DATA_STRUCTURES_DEFINTIONS_H

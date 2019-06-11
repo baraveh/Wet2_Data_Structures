@@ -34,6 +34,8 @@ public:
 
     const int& getId() const;
 
+    const bool isEmpty() const;
+
 };
 
 

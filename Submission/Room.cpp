@@ -50,3 +50,12 @@ Pair<CourseID, GroupID> &Room::getLecture(const int &hour) {
 const int& Room::getId() const{
     return r_roomId;
 }
+
+const bool Room::isEmpty() const {
+    for(int i = 0; i < m; i++){
+        if (r_hoursArr[i].isValid){
+            return false;
+        }
+    }
+    return true;
+}

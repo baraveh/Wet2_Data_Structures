@@ -31,12 +31,7 @@ public:
 
     Course &operator=(const Course &aCourse) = default;
 
-    void setId(const int& id){
-        if(id < 1){
-            throw IllegalParameters();
-        }
-        c_ID = id;
-    }
+    void setId(const int& id);
 
     void
     addLecture(const RoomID &roomID, const Hour &hour, const GroupID &groupID,

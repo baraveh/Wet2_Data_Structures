@@ -40,12 +40,20 @@ void Course::removeLecture(const GroupID &groupID, const Hour &hour) {
 }
 
 int Course::competition(const Course &aCourse, int numLectures) {
-    const AVLNode<RankKey, int>* thisCandidate = c_studentsRanker.searchIndex(c_totalLectures - numLectures);
-    const AVLNode<RankKey, int>* otherCandidate = aCourse.c_studentsRanker.searchIndex(aCourse.c_totalLectures - numLectures);
 
-    if(thisCandidate == nullptr || otherCandidate == nullptr){
-        throw IllegalParameters();
+    if(c_totalLectures == 0){
+        return aCourse.c_ID;
     }
+    if(aCourse.c_totalLectures == 0){
+        return c_ID;
+    }
+
+    int thisRankToSearch = numLectures > c_totalLectures ? c_totalLectures -1 : c_totalLectures - numLectures;
+    int otherRankToSearch = numLectures > aCourse.c_totalLectures ? aCourse.c_totalLectures - 1 : aCourse.c_totalLectures - numLectures;
+    const AVLNode<RankKey, int>* thisCandidate = c_studentsRanker.searchIndex(thisRankToSearch);
+    const AVLNode<RankKey, int>* otherCandidate = aCourse.c_studentsRanker.searchIndex(otherRankToSearch);
+
+    assert(thisCandidate != nullptr && otherCandidate != nullptr);
 
     return c_studentsRanker.rightSum(thisCandidate) >= aCourse.c_studentsRanker.rightSum(otherCandidate) ? c_ID : aCourse.c_ID;
 }
@@ -65,4 +73,11 @@ void Course::mergeCourses(const Course &aCourse) {
         throw KeyAlreadyExists<int>();
     }
 
+}
+
+void Course::setId(const int &id) {
+    if(id < 1){
+        throw IllegalParameters();
+    }
+    c_ID = id;
 }

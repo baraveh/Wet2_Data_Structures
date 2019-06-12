@@ -80,5 +80,5 @@ StatusType getAverageStudentsInCourse(void *DS, int hour, int roomID, float * av
 }
 
 void Quit(void** DS){
-    
+
 }

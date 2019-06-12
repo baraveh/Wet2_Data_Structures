@@ -6,13 +6,13 @@
 
 RoomHash::RoomHash() : h_numOfElements(0){}
 
-Room &RoomHash::find(const RoomID& roomId) {
+Room* RoomHash::find(const RoomID& roomId) {
     int hash = roomId%(h_table.getSize());
     Node<Room>* iterator = h_table[hash].getHead();
     for(int i = 0; i < h_table[hash].getSize(); i++){
         assert(iterator != nullptr);
         if((iterator->data_m).getId() == roomId){
-            return iterator->data_m;
+            return &(iterator->data_m);
         }
         iterator = iterator->next_m;
     }
@@ -26,7 +26,8 @@ void RoomHash::addRoom(const RoomID& roomId) {
     }
     catch (NoSuchKey& e) {
         int hash = roomId%(h_table.getSize());
-        h_table[hash].addLast(Room(roomId));
+        Room roomToAdd = Room(roomId);
+        h_table[hash].addLast(roomToAdd);
         h_numOfElements++;
 
         if(h_numOfElements == h_table.getSize()){
@@ -36,7 +37,7 @@ void RoomHash::addRoom(const RoomID& roomId) {
         }
         return;
     }
-    throw KeyAlreadyExists<Room>(find(roomId));
+    throw KeyAlreadyExists<Room>(*(find(roomId)));
 }
 
 void RoomHash::removeRoom(const RoomID& roomId) {
@@ -63,8 +64,9 @@ void RoomHash::removeRoom(const RoomID& roomId) {
 void RoomHash::rehash(const Array<List<Room>> &oldTable) {
     h_numOfElements = 0;
     for(int i = 0; i < oldTable.getSize(); i++){
+        List<Room> elementsToCopy = oldTable[i];
         Node<Room>* iterator = oldTable[i].getHead();
-        for(int j = 0; j < oldTable[i].getSize(); j++) {
+        for(int j = 0; j < elementsToCopy.getSize(); j++) {
             assert(iterator != nullptr);
             addRoom(iterator->data_m);
             iterator = iterator->next_m;
@@ -88,5 +90,6 @@ void RoomHash::addRoom(const Room &room) {
         }
         return;
     }
-    throw KeyAlreadyExists<Room>(find(room.getId()));
+    assert(false);
+    throw KeyAlreadyExists<Room>(*(find(room.getId())));
 }

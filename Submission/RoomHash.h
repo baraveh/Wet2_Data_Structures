@@ -21,7 +21,7 @@ public:
 
     RoomHash();
 
-    Room& find(const RoomID& roomId);
+    Room* find(const RoomID& roomId);
 
     void addRoom(const RoomID& roomId);
 

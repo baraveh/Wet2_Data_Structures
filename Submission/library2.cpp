@@ -2,7 +2,7 @@
 // Created by Bar on 12-Jun-19.
 //
 
-#include "NotForSubmission/library2.h" //TODO change includes before submission!
+#include "library2.h"
 #include "CourseMerger.h"
 #include "Exception.h"
 

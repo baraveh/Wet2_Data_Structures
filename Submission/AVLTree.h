@@ -617,9 +617,9 @@ const AVLNode<T, S> *AVLTree<T, S>::searchIndex(const int &index, const AVLNode<
     if(root->left_m->rank_m > kMinusOne){
         return searchIndex(index,root->left_m);
     }
-    if(root->left_m->rank_m < kMinusOne){
-        return searchIndex(kMinusOne - root->left_m->rank_m, root->right_m);
-    }
+     //if(root->left_m->rank_m < kMinusOne)
+     return searchIndex(kMinusOne - root->left_m->rank_m, root->right_m);
+
 }
 
 template<class T, class S>

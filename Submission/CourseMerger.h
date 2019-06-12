@@ -12,10 +12,10 @@
 #include "RoomHash.h"
 
 typedef enum {
-    SUCCESS = 0,
-    FAILURE = -1,
-    ALLOCATION_ERROR = -2,
-    INVALID_INPUT = -3
+    C_SUCCESS = 0,
+    C_FAILURE = -1,
+    C_ALLOCATION_ERROR = -2,
+    C_INVALID_INPUT = -3
 } CourseMergerResult;
 
 class CourseMerger {

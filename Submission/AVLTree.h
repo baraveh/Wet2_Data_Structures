@@ -607,7 +607,16 @@ const AVLNode<T, S> *AVLTree<T, S>::searchIndex(const int& index) const {
 
 template<class T, class S>
 const AVLNode<T, S> *AVLTree<T, S>::searchIndex(const int &index, const AVLNode<T, S> *root) const{
-    if(root == nullptr || root->left_m == nullptr){
+    if(root == nullptr){
+        return nullptr;
+    }
+    if(root->left_m == nullptr){
+        if(index == 1){
+            return root;
+        }
+        if(index == 2){
+            return root->right_m;
+        }
         return nullptr;
     }
     int kMinusOne = index - 1;
@@ -617,9 +626,10 @@ const AVLNode<T, S> *AVLTree<T, S>::searchIndex(const int &index, const AVLNode<
     if(root->left_m->rank_m > kMinusOne){
         return searchIndex(index,root->left_m);
     }
-     //if(root->left_m->rank_m < kMinusOne)
-     return searchIndex(kMinusOne - root->left_m->rank_m, root->right_m);
-
+     if(root->left_m->rank_m < kMinusOne) {
+         return searchIndex(kMinusOne - root->left_m->rank_m, root->right_m);
+     }
+     return nullptr;
 }
 
 template<class T, class S>

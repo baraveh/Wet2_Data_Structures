@@ -29,6 +29,7 @@ void RoomHash::addRoom(const RoomID& roomId) {
         Room roomToAdd = Room(roomId);
         h_table[hash].addLast(roomToAdd);
         h_numOfElements++;
+        printHash();
 
         if(h_numOfElements == h_table.getSize()){
             Array<List<Room>> oldTable = h_table;

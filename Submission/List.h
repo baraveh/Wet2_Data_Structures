@@ -43,6 +43,7 @@ public:
         Node<T> *temp = aList.head_m;
         while (size_m != aList.size_m) {
             addLast(temp->data_m);
+            temp = temp->next_m;
         }
     }
 
@@ -63,6 +64,7 @@ public:
         Node<T> *temp = aList.head_m;
         while (size_m != aList.size_m) {
             addLast(temp->data_m);
+            temp = temp->next_m;
         }
 
         return *this;

@@ -150,7 +150,7 @@ public:
     }
 
 
-    void unite(const int& index1, const int& index2){
+    int unite(const int& index1, const int& index2){
         UnionFindNode* firstRoot = u_elementArr[index1];
         UnionFindNode* secondRoot = u_elementArr[index2];
 
@@ -169,13 +169,22 @@ public:
             throw UnionFailed();
         }
 
-        firstRoot->numOfChildren > secondRoot->numOfChildren ? biggerRoot = firstRoot, smallerRoot = secondRoot : biggerRoot = secondRoot, smallerRoot = firstRoot;
+        if(firstRoot->numOfChildren > secondRoot->numOfChildren){
+            biggerRoot = firstRoot;
+            smallerRoot = secondRoot;
+        }
+        else{
+            biggerRoot = secondRoot;
+            smallerRoot = firstRoot;
+        }
 
         smallerRoot->u_parent = biggerRoot;
         biggerRoot->numOfChildren += 1 + smallerRoot->numOfChildren;
         T* temp = u_groupArr[smallerRoot->u_index];
         u_groupArr[smallerRoot->u_index] = u_groupArr[biggerRoot->u_index];
         delete temp;
+
+        return biggerRoot->u_index;
     }
 };
 

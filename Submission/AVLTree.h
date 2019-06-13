@@ -357,7 +357,9 @@ AVLTree<T, S>::createTreeFromSortedArr(AVLNode<T, S> *nodeArr, int start, int en
     int mid = (start + end) / 2;
     T key = nodeArr[mid].key_m;
     S value = nodeArr[mid].value_m;
-    auto aNode = new AVLNode<T, S>(key, value);
+    T leftSum = nodeArr[mid].leftSum;
+    T rightSum = nodeArr[mid].rightSum;
+    auto aNode = new AVLNode<T, S>(key, value, leftSum, rightSum);
     aNode->left_m = createTreeFromSortedArr(nodeArr, start, mid - 1);
     aNode->right_m = createTreeFromSortedArr(nodeArr, mid + 1, end);
     aNode->height_m = std::max(height(aNode->left_m),
@@ -382,18 +384,19 @@ template<class T, class S>
 AVLNode<T, S> *
 AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
 
+    T keyCopy = T(keyToDelete);
     if (root == nullptr) {
         return root;
     }
 
     if (keyToDelete < root->key_m) {
         root->left_m = deleteNode(root->left_m, keyToDelete);
-        root->rightSum -= keyToDelete;
+        root->rightSum -= keyCopy;
     }
 
     else if (keyToDelete > root->key_m) {
         root->right_m = deleteNode(root->right_m, keyToDelete);
-        root->rightSum -= keyToDelete;
+        root->rightSum -= keyCopy;
     }
 
         // key is equal
@@ -426,6 +429,7 @@ AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
 
             root->right_m = deleteNode(root->right_m,
                                        temp->key_m);
+            root->rightSum -= keyCopy;
         }
 
     }
@@ -553,6 +557,16 @@ AVLTree<T, S> &AVLTree<T, S>::operator=(const AVLTree<T, S> &aTree) {
             for (int i = 0; i < aTree.countNodesInTree(); i++) {
                 nodeArr[i].key_m = keysArr[i];
                 nodeArr[i].value_m = valuesArr[i];
+            }
+            T leftSum = T(0);
+            for(int i = 0; i < aTree.countNodesInTree(); i++){
+                nodeArr[i].leftSum = leftSum;
+                leftSum += nodeArr[i].key_m;
+            }
+            T rightSum = T(0);
+            for(int i = aTree.countNodesInTree() -1; i >= 0; i--){
+                nodeArr[i].rightSum = rightSum;
+                rightSum += nodeArr[i].key_m;
             }
             delete[] keysArr;
             delete[] valuesArr;

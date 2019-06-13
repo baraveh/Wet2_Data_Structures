@@ -104,7 +104,8 @@ CourseMerger::mergeCourses(const CourseID &course1, const CourseID &course2) {
     catch (KeyAlreadyExists<int>& e){
         return C_FAILURE;
     }
-    c_courseUF.unite(course1-1, course2 -1);
+    int courseID = c_courseUF.unite(course1-1, course2 -1) + 1;
+    mergedCourse.setId(courseID);
     *(c_courseUF.find(course1-1)) = mergedCourse;
     return C_SUCCESS;
 }
@@ -122,7 +123,15 @@ CourseMerger::competition(const CourseID &course1, const CourseID &course2,
     if(firstCourse == secondCourse){
         return C_FAILURE;
     }
-    *winner = ((*firstCourse).competition((*secondCourse), numOfLectures));
+    int winningCourseId = ((*firstCourse).competition((*secondCourse), numOfLectures));
+    Course* winningCourse = c_courseUF.find(winningCourseId -1);
+    if(winningCourse== firstCourse){
+        *winner = course1;
+    }
+    if(winningCourse == secondCourse){
+        *winner = course2;
+    }
+    assert(*winner == course1 || *winner == course2);
     return C_SUCCESS;
 }
 

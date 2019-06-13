@@ -60,7 +60,7 @@ public:
 
     template <T,S> friend bool operator != (const Pair& a, const Pair& b);
 
-    Pair operator-(){
+    Pair operator-() const{
         return Pair(-p_first, -p_second);
     }
 

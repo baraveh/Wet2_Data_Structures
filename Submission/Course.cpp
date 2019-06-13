@@ -48,17 +48,20 @@ int Course::competition(const Course &aCourse, int numLectures) {
         return c_ID;
     }
 
-    int thisRankToSearch = numLectures > c_totalLectures ? c_totalLectures : c_totalLectures - numLectures + 1;
-    int otherRankToSearch = numLectures > aCourse.c_totalLectures ? aCourse.c_totalLectures : aCourse.c_totalLectures - numLectures + 1;
+    int thisRankToSearch = numLectures >= c_totalLectures ? 1 : c_totalLectures - numLectures + 1;
+    int otherRankToSearch = numLectures >= aCourse.c_totalLectures ? 1 : aCourse.c_totalLectures - numLectures + 1;
     const AVLNode<RankKey, int>* thisCandidate = c_studentsRanker.searchIndex(thisRankToSearch);
     const AVLNode<RankKey, int>* otherCandidate = aCourse.c_studentsRanker.searchIndex(otherRankToSearch);
 
     assert(thisCandidate != nullptr && otherCandidate != nullptr);
 
-    if(c_studentsRanker.rightSum(thisCandidate) == aCourse.c_studentsRanker.rightSum(otherCandidate)){
+    NumOfStudents thisSum = thisCandidate->rightSum.t_first + thisCandidate->key_m.t_first;
+    NumOfStudents otherSum = otherCandidate->rightSum.t_first + otherCandidate->key_m.t_first;;
+
+    if(thisSum == otherSum){
         return c_ID > aCourse.c_ID ? c_ID : aCourse.c_ID;
     }
-    return c_studentsRanker.rightSum(thisCandidate) > aCourse.c_studentsRanker.rightSum(otherCandidate) ? c_ID : aCourse.c_ID;
+    return thisSum > otherSum ? c_ID : aCourse.c_ID;
 }
 
 float Course::getAverageStudents() {

@@ -29,15 +29,15 @@ public:
     T rightSum;
 
 
-    AVLNode(const T &key = T(), const S &value = S())
+    AVLNode(const T &key = T(), const S &value = S(), const T& leftSum = T() , const T& rightSum = T())
             : key_m(key),
               value_m(value),
               left_m(nullptr),
               right_m(nullptr),
               height_m(1),
               rank_m(1),
-              leftSum(0),
-              rightSum(0){}
+              leftSum(leftSum),
+              rightSum(rightSum){}
 
     ~AVLNode() {
         delete left_m;
@@ -87,9 +87,6 @@ public:
 
     AVLNode<T, S> *getRoot();
 
-    const T leftSum(const AVLNode<T,S>* aNode) const;
-
-    const T rightSum(const AVLNode<T,S>* aNode) const;
 
 private:
     AVLNode<T, S> *root;
@@ -115,7 +112,7 @@ private:
     AVLNode<T, S> *deleteNode(AVLNode<T, S> *root, const T &keyToDelete);
 
     AVLNode<T, S> *
-    insertNode(AVLNode<T, S> *root, const T &key, const S &value);
+    insertNode(AVLNode<T, S> *root, const T &key, const S &value, const T& leftSum, const T& rightSum);
 
     AVLNode<T, S> *getMin(AVLNode<T, S> *);
 
@@ -128,7 +125,6 @@ private:
     void printRanksInOrder(AVLNode<T,S>* root);
 
     void printSumsInOrder (AVLNode<T,S>* root);
-
 
 };
 
@@ -144,13 +140,9 @@ AVLNode<T, S> *AVLTree<T, S>::rollLL(AVLNode<T, S> *aNode) {
     aNode->height_m = std::max(height(aNode->left_m),
                                height(aNode->right_m)) + 1;
     aNode->rank_m = 1 + rank(aNode->left_m) + rank(aNode->right_m);
-    aNode->leftSum = leftSum(aNode);
-    aNode->rightSum = rightSum(aNode);
     rotatedNode->height_m = std::max(height(rotatedNode->left_m),
                            height(rotatedNode->right_m)) + 1;
     rotatedNode->rank_m = 1 + rank(rotatedNode->left_m) + rank(rotatedNode->right_m);
-    rotatedNode->leftSum = leftSum(rotatedNode);
-    rotatedNode->rightSum = rightSum(rotatedNode);
     
     return rotatedNode;
 }
@@ -166,14 +158,10 @@ AVLNode<T, S> *AVLTree<T, S>::rollRR(AVLNode<T, S> *aNode) {
     aNode->height_m = max(height(aNode->left_m),
                           height(aNode->right_m)) + 1;
     aNode->rank_m = 1 + rank(aNode->right_m) + rank(aNode->left_m);
-    aNode->leftSum = leftSum(aNode);
-    aNode->rightSum = rightSum(aNode);
 
     rotatedNode->height_m = max(height(rotatedNode->left_m),
                       height(rotatedNode->right_m)) + 1;
     rotatedNode->rank_m = 1 + rank(rotatedNode->right_m) + rank(rotatedNode->left_m);
-    rotatedNode->leftSum = leftSum(rotatedNode);
-    rotatedNode->rightSum = rightSum(rotatedNode);
 
     return rotatedNode;
 }
@@ -208,7 +196,7 @@ bool AVLTree<T, S>::insertElement(const T &key, const S &value) {
     if (searchKey(key)) {
         throw KeyAlreadyExists<T>(key);
     }
-    root = insertNode(root, key, value);
+    root = insertNode(root, key, value, T(0), T(0));
     return true;
 }
 
@@ -375,8 +363,6 @@ AVLTree<T, S>::createTreeFromSortedArr(AVLNode<T, S> *nodeArr, int start, int en
     aNode->height_m = std::max(height(aNode->left_m),
                                height(aNode->right_m)) + 1;
     aNode->rank_m = 1 + rank(aNode->left_m) + rank(aNode->right_m);
-    aNode->leftSum = leftSum(aNode);
-    aNode->rightSum = rightSum(aNode);
     return aNode;
 }
 
@@ -400,11 +386,15 @@ AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
         return root;
     }
 
-    if (keyToDelete < root->key_m)
+    if (keyToDelete < root->key_m) {
         root->left_m = deleteNode(root->left_m, keyToDelete);
+        root->rightSum -= keyToDelete;
+    }
 
-    else if (keyToDelete > root->key_m)
+    else if (keyToDelete > root->key_m) {
         root->right_m = deleteNode(root->right_m, keyToDelete);
+        root->rightSum -= keyToDelete;
+    }
 
         // key is equal
     else {
@@ -447,8 +437,6 @@ AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
     root->height_m = 1 + std::max(height(root->left_m),
                                   height(root->right_m));
     root->rank_m = 1 + rank(root->left_m) + rank (root->right_m);
-    root->leftSum = leftSum(root);
-    root->rightSum = rightSum(root);
 
     int balance = getBalance(root);
 
@@ -482,15 +470,19 @@ AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
 
 template<class T, class S>
 AVLNode<T, S> *
-AVLTree<T, S>::insertNode(AVLNode<T, S> *root, const T &key, const S &value) {
+AVLTree<T, S>::insertNode(AVLNode<T, S> *root, const T &key, const S &value, const T& leftSum , const T& rightSum) {
     
     if (root == nullptr)
-        return new AVLNode<T, S>(key, value);
+        return new AVLNode<T, S>(key, value, leftSum, rightSum);
 
-    if (key < root->key_m)
-        root->left_m = insertNode(root->left_m, key, value);
-    else if (key > root->key_m)
-        root->right_m = insertNode(root->right_m, key, value);
+    if (key < root->key_m) {
+        root->left_m = insertNode(root->left_m, key, value, leftSum , root->key_m + root->rightSum);
+        root->leftSum += key;
+    }
+    else if (key > root->key_m) {
+        root->right_m = insertNode(root->right_m, key, value, root->key_m + root->leftSum, rightSum);
+        root->rightSum +=key;
+    }
     else // is equal
         throw KeyAlreadyExists<T>(key);
 
@@ -500,8 +492,6 @@ AVLTree<T, S>::insertNode(AVLNode<T, S> *root, const T &key, const S &value) {
 
     root->rank_m = 1 + rank(root->left_m) + rank(root->right_m);
 
-    root->leftSum = leftSum(root);
-    root->rightSum = rightSum(root);
 
     int balance = getBalance(root);
     
@@ -584,21 +574,6 @@ int AVLTree<T, S>::getBalance(AVLNode<T, S> *aNode) {
            height(aNode->right_m);
 }
 
-template<class T, class S>
-const T AVLTree<T, S>::rightSum(const AVLNode<T, S> *aNode) const{
-    if(aNode == nullptr || aNode->right_m == nullptr) {
-        return T(0);
-    }
-    return aNode->right_m->key_m + aNode->right_m->leftSum + aNode->right_m->rightSum;
-}
-
-template<class T, class S>
-const T AVLTree<T, S>::leftSum(const AVLNode<T, S> *aNode) const{
-    if(aNode == nullptr || aNode->left_m == nullptr) {
-        return T(0);
-    }
-    return aNode->left_m->key_m + aNode->left_m->leftSum + aNode->left_m->rightSum;
-}
 
 template<class T, class S>
 const AVLNode<T, S> *AVLTree<T, S>::searchIndex(const int& index) const {
@@ -724,6 +699,19 @@ mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
         k++;
     }
     *mergedSize = k;
+
+    T currLeftSum = T(0);
+    for(int i = 0; i < k; i++){
+        mergedArr[i].leftSum = currLeftSum;
+        currLeftSum += mergedArr[i].key_m;
+    }
+
+    T currRightSum = T(0);
+    for(int i = 0 ; i < k; i++){
+        mergedArr[k-1-i].rightSum = currRightSum;
+        currRightSum += mergedArr[k-1-i].key_m;
+    }
+
     return mergedArr;
 }
 

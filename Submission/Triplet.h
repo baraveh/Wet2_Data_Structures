@@ -60,7 +60,7 @@ public:
 
     template <T,S,U> friend bool operator!=(const Triplet &a, const Triplet &b);
 
-    Triplet operator-(){
+    Triplet operator-() const{
         return Triplet(-t_first, -t_second, -t_third);
     }
 

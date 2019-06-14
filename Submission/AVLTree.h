@@ -47,9 +47,9 @@ public:
 };
 
 template<typename T, typename S>
-static AVLNode<T, S> *
+static void
 mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
-                  int arr1Size, int arr2Size, int *mergedSize);
+                  int arr1Size, int arr2Size, int *mergedSize, AVLNode<T,S>* mergedArr);
 
 template<class T, class S>
 class AVLTree {
@@ -344,19 +344,21 @@ void
 AVLTree<T, S>::mergeTrees(const AVLTree<T, S> &treeA, const AVLTree &treeB) {
     int treeASize = treeA.countNodesInTree();
     int treeBSize = treeB.countNodesInTree();
+    T *treeAKeys = new T[treeASize];
+    S *treeAVals = new S[treeASize];
+    T *treeBKeys = new T[treeBSize];
+    S *treeBVals = new S[treeBSize];
+    auto nodeArr = new AVLNode<T,S>[treeASize + treeBSize];
     try {
-        T *treeAKeys = new T[treeASize];
-        S *treeAVals = new S[treeASize];
-        T *treeBKeys = new T[treeBSize];
-        S *treeBVals = new S[treeBSize];
+
         treeA.printTree(treeAKeys, treeAVals);
         treeB.printTree(treeBKeys, treeBVals);
 
         int nodeArrSize = 0;
-        AVLNode<T, S> *nodeArr = mergeSortedArrays(treeAKeys, treeAVals,
-                                                   treeBKeys,
+        mergeSortedArrays(treeAKeys, treeAVals,
+                treeBKeys,
                                                    treeBVals, treeASize,
-                                                   treeBSize, &nodeArrSize);
+                                                   treeBSize, &nodeArrSize, nodeArr);
         delete[] treeAKeys;
         delete[] treeAVals;
         delete[] treeBKeys;
@@ -365,16 +367,23 @@ AVLTree<T, S>::mergeTrees(const AVLTree<T, S> &treeA, const AVLTree &treeB) {
         AVLNode<T, S> *temp = root;
         AVLNode<T, S> *res = createTreeFromSortedArr(nodeArr, 0,
                                                      (nodeArrSize) - 1);
+        delete [] nodeArr;
         root = res;
 
-        delete[] nodeArr;
+
+
         if (temp != nullptr) {
             delete temp;
         }
 
     }
-    catch (std::bad_alloc &e) {
-        throw MemError();
+    catch (KeyAlreadyExists<T>& e){
+        delete[] treeAKeys;
+        delete[] treeAVals;
+        delete[] treeBKeys;
+        delete[] treeBVals;
+        delete [] nodeArr;
+        throw KeyAlreadyExists<T>(e.whatKey());
     }
 }
 
@@ -428,7 +437,6 @@ template<class T, class S>
 AVLNode<T, S> *
 AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
 
-    T keyCopy = T(keyToDelete);
     if (root == nullptr) {
         return root;
     }
@@ -520,7 +528,6 @@ template<class T, class S>
 AVLNode<T, S> *
 AVLTree<T, S>::insertNode(AVLNode<T, S> *root, const T &key, const S &value) {
 
-    T keyCopy = T(key);
     if (root == nullptr)
         return new AVLNode<T, S>(key, value);
 
@@ -736,13 +743,12 @@ const T AVLTree<T, S>::getSumOfLargerKeys(const T &key) const {
 
 
 template<typename T, typename S>
-AVLNode<T, S> *
+void
 mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
-                  int arr1Size, int arr2Size, int *mergedSize) {
+                  int arr1Size, int arr2Size, int *mergedSize, AVLNode<T,S>* mergedArr) {
     if (!arr1Keys || !arr2Keys || !arr1Values || !arr2Values || !mergedSize) {
         throw MemError();
     }
-    auto mergedArr = new AVLNode<T, S>[arr1Size + arr2Size];
     int i = 0, j = 0, k = 0;
     while (i < arr1Size && j < arr2Size) {
         if (arr1Keys[i] <= arr2Keys[j]) {
@@ -774,8 +780,6 @@ mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
         k++;
     }
     *mergedSize = k;
-
-    return mergedArr;
 }
 
 

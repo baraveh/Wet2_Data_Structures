@@ -127,7 +127,7 @@ CourseMerger::competition(const CourseID &course1, const CourseID &course2,
     if(winStat > 0){
         *winner = course1;
     }
-    if(winStat < 0){
+    else if(winStat < 0){
         *winner = course2;
     }
     else{

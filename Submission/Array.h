@@ -5,7 +5,7 @@
 #ifndef WET1_DATA_STRUCTURES_ARRAY_H
 #define WET1_DATA_STRUCTURES_ARRAY_H
 
-#include "exception.h"
+#include "Exception.h"
 template <typename T>
 class Array {
     T* array_m;

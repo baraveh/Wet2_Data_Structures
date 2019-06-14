@@ -151,7 +151,6 @@ int main()
     cout << "\nSums \n";
     tree2.printSumsInOrder();
 
-    AVLTree<int, int> mergedTree;
     tree1.mergeTrees(tree1, tree2);
     cout << "\nFollowing is Inorder traversal of the merged tree \n";
     cout << "Values \n";

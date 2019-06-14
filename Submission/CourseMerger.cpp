@@ -114,7 +114,7 @@ CourseMergerResult
 CourseMerger::competition(const CourseID &course1, const CourseID &course2,
                           const int &numOfLectures, int *winner) {
     if(course1 < 1 || course1 > c_numOfCourses || course2 < 1 || course2 > c_numOfCourses || winner ==
-                                                                                             nullptr){
+                                                                                             nullptr ||numOfLectures <= 0){
         return C_INVALID_INPUT;
     }
 
@@ -123,13 +123,15 @@ CourseMerger::competition(const CourseID &course1, const CourseID &course2,
     if(firstCourse == secondCourse){
         return C_FAILURE;
     }
-    int winningCourseId = ((*firstCourse).competition((*secondCourse), numOfLectures));
-    Course* winningCourse = c_courseUF.find(winningCourseId -1);
-    if(winningCourse== firstCourse){
+    int winStat = ((*firstCourse).competition((*secondCourse), numOfLectures));
+    if(winStat > 0){
         *winner = course1;
     }
-    if(winningCourse == secondCourse){
+    if(winStat < 0){
         *winner = course2;
+    }
+    else{
+        *winner = course1 > course2 ? course1 : course2;
     }
     assert(*winner == course1 || *winner == course2);
     return C_SUCCESS;

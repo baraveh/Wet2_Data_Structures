@@ -41,27 +41,19 @@ void Course::removeLecture(const GroupID &groupID, const Hour &hour) {
 
 int Course::competition(const Course &aCourse, int numLectures) {
 
-    if(c_totalLectures == 0){
-        return aCourse.c_ID;
-    }
-    if(aCourse.c_totalLectures == 0){
-        return c_ID;
-    }
-
     int thisRankToSearch = numLectures >= c_totalLectures ? 1 : c_totalLectures - numLectures + 1;
     int otherRankToSearch = numLectures >= aCourse.c_totalLectures ? 1 : aCourse.c_totalLectures - numLectures + 1;
     const AVLNode<RankKey, int>* thisCandidate = c_studentsRanker.searchIndex(thisRankToSearch);
     const AVLNode<RankKey, int>* otherCandidate = aCourse.c_studentsRanker.searchIndex(otherRankToSearch);
 
-    assert(thisCandidate != nullptr && otherCandidate != nullptr);
 
-    NumOfStudents thisSum = thisCandidate->rightSum.t_first + thisCandidate->key_m.t_first;
-    NumOfStudents otherSum = otherCandidate->rightSum.t_first + otherCandidate->key_m.t_first;;
+    NumOfStudents thisSum = thisCandidate != nullptr ? c_studentsRanker.getSumOfLargerKeys(thisCandidate->key_m).t_first + thisCandidate->key_m.t_first : 0;
+    NumOfStudents otherSum = otherCandidate != nullptr? aCourse.c_studentsRanker.getSumOfLargerKeys(otherCandidate->key_m).t_first + otherCandidate->key_m.t_first : 0;
 
     if(thisSum == otherSum){
-        return c_ID > aCourse.c_ID ? c_ID : aCourse.c_ID;
+        return 0;
     }
-    return thisSum > otherSum ? c_ID : aCourse.c_ID;
+    return thisSum > otherSum ? 1 : -1;
 }
 
 float Course::getAverageStudents() {
